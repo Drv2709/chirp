@@ -1,0 +1,15 @@
+<form method="post" action="/posts" class="form compose">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <% if (locals.error) { %>
+    <p class="form-error" role="alert"><%= error %></p>
+  <% } %>
+
+  <label for="content" class="visually-hidden">What's happening?</label>
+  <textarea id="content" name="content" rows="3" maxlength="280" placeholder="What's happening?" required><%= locals.content || '' %></textarea>
+
+  <div class="compose__actions">
+    <span class="muted">Max 280 characters</span>
+    <button type="submit" class="btn">Post</button>
+  </div>
+</form>

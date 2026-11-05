@@ -1,9 +1,5 @@
 import path from "node:path";
-import express, {
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
+import express, { type NextFunction, type Request, type Response } from "express";
 import passport from "passport";
 import { isProduction } from "./config/env";
 import { configurePassport } from "./config/passport";
@@ -12,6 +8,8 @@ import { csrfProtection } from "./middleware/csrf";
 import { requireAuth } from "./middleware/requireAuth";
 import { authRouter, logoutRouter } from "./routes/auth";
 import { healthRouter } from "./routes/health";
+import { homeRouter } from "./routes/home";
+import { postsRouter } from "./routes/posts";
 
 export const app = express();
 
@@ -48,11 +46,8 @@ app.use(authRouter);
 // Auth gate: everything below requires a logged-in user.
 app.use(requireAuth);
 app.use(logoutRouter);
-
-// TEMPORARY home page; replaced by the real feed in P4.
-app.get("/", (_req, res) => {
-  res.render("pages/home", { title: "Home" });
-});
+app.use(homeRouter);
+app.use(postsRouter);
 
 // Minimal 404 + error handlers (polished in P9).
 app.use((_req, res) => {

@@ -1,4 +1,33 @@
 <%- include('../partials/head') %>
-<h1>Welcome, <%= currentUser.displayName %></h1>
-<p>You're signed in as <strong>@<%= currentUser.username %></strong>. The feed arrives in P4.</p>
+<h1>Home</h1>
+
+<%- include('../partials/composeForm') %>
+
+<h2 class="section-title">Your posts</h2>
+
+<% if (posts.length === 0) { %>
+  <p class="muted">You haven't posted anything yet.</p>
+<% } else { %>
+  <ul class="post-list">
+    <% posts.forEach(function (post) { %>
+      <li class="post">
+        <div class="post__meta">
+          <strong><%= post.author.displayName %></strong>
+          <span class="muted">@<%= post.author.username %></span>
+          <span class="muted">·</span>
+          <a class="muted" href="/posts/<%= post.id %>">
+            <%= new Date(post.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %>
+          </a>
+        </div>
+        <p class="post__content"><%= post.content %></p>
+        <% if (currentUser && currentUser.id === post.author.id) { %>
+          <form method="post" action="/posts/<%= post.id %>/delete" class="inline-form" onsubmit="return confirm('Delete this post?');">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn--danger">Delete</button>
+          </form>
+        <% } %>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
 <%- include('../partials/foot') %>

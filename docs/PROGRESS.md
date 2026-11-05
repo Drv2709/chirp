@@ -45,3 +45,28 @@
 - [x] Server starts: "Chirp listening on http://localhost:3000 (development)"
 - [x] /healthz returns 200 {"status":"ok","db":"up"}
 - [x] / renders the EJS page with the styled heading
+
+## PHASE COMPLETE: P2 (Auth)
+
+**Files created**
+
+- src/types/express.d.ts, src/lib/password.ts, src/validators/auth.ts
+- src/config/session.ts, src/config/passport.ts
+- src/middleware/csrf.ts, src/middleware/requireAuth.ts
+- src/routes/auth.ts, updated src/app.ts
+- views/partials/{head,nav,foot}.ejs, views/pages/{login,signup,home,error}.ejs
+- updated public/styles.css, tsconfig.json (module/moduleResolution node16)
+
+**Commands run**
+
+- git add . && git commit -m "P1: express scaffold"
+- npm run typecheck, npm run dev
+- curl gate + CSRF tests, psql checks on "User" and session
+
+**Verify checklist passed**
+
+- [x] / redirects to /login when logged out; POST without CSRF token returns 403
+- [x] Signup validation errors keep input; valid signup logs in and shows nav
+- [x] Session persists across server restart (Postgres-backed)
+- [x] Logout, wrong password, duplicate username, /login redirect when authed
+- [x] passwordHash stored as bcrypt cost 12 ($2b$12$); cookie HttpOnly + SameSite=Lax
