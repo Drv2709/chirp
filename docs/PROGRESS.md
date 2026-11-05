@@ -70,3 +70,24 @@
 - [x] Session persists across server restart (Postgres-backed)
 - [x] Logout, wrong password, duplicate username, /login redirect when authed
 - [x] passwordHash stored as bcrypt cost 12 ($2b$12$); cookie HttpOnly + SameSite=Lax
+
+## PHASE COMPLETE: P3 (Posts CRUD)
+
+**Files created**
+
+- src/validators/post.ts, src/lib/postQueries.ts
+- src/routes/home.ts, src/routes/posts.ts, updated src/app.ts
+- views/partials/composeForm.ejs, views/pages/post.ejs, updated views/pages/home.ejs
+- updated public/styles.css
+
+**Commands run**
+
+- npm run typecheck, npm run dev
+- DevTools fetch tests for 403 (non-author delete) and 400 (281 chars)
+
+**Verify checklist passed**
+
+- [x] Create post; empty/whitespace rejected; HTML rendered as text
+- [x] /posts/:id detail page; unknown id returns 404
+- [x] Delete is author-only and enforced server-side (403 for non-author)
+- [x] 280-char limit enforced server-side (400)

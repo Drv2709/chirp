@@ -1,0 +1,17 @@
+<% if (locals.hasPrev || locals.hasNext) { %>
+  <nav class="pagination" aria-label="Feed pages">
+    <% if (hasPrev) { %>
+      <a class="pagination__link" href="<%= page - 1 === 1 ? '/' : '/?page=' + (page - 1) %>">← Newer</a>
+    <% } else { %>
+      <span class="pagination__link pagination__link--disabled">← Newer</span>
+    <% } %>
+
+    <span class="muted">Page <%= page %></span>
+
+    <% if (hasNext) { %>
+      <a class="pagination__link" href="/?page=<%= page + 1 %>">Older →</a>
+    <% } else { %>
+      <span class="pagination__link pagination__link--disabled">Older →</span>
+    <% } %>
+  </nav>
+<% } %>

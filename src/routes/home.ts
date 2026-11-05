@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { findPostsByAuthor } from "../lib/postQueries";
+import { getFeedPage } from "../lib/feed";
+import { pageQuerySchema } from "../validators/pagination";
 
 export const homeRouter = Router();
 
-// TEMPORARY: shows your own posts. Replaced by the real feed in P4.
 homeRouter.get("/", async (req, res, next) => {
   try {
     const user = req.user;
@@ -11,8 +11,19 @@ homeRouter.get("/", async (req, res, next) => {
       res.redirect("/login");
       return;
     }
-    const posts = await findPostsByAuthor(user.id);
-    res.render("pages/home", { title: "Home", posts, error: null, content: "" });
+
+    const parsed = pageQuerySchema.safeParse(req.query);
+    const page = parsed.success ? parsed.data.page : 1;
+
+    const feed = await getFeedPage(user.id, page);
+
+    // Page number past the end (e.g. after deleting posts): go back to the start.
+    if (feed.posts.length === 0 && page > 1) {
+      res.redirect("/");
+      return;
+    }
+
+    res.render("pages/home", { title: "Home", ...feed, error: null, content: "" });
   } catch (error) {
     next(error);
   }

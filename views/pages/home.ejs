@@ -3,10 +3,10 @@
 
 <%- include('../partials/composeForm') %>
 
-<h2 class="section-title">Your posts</h2>
+<h2 class="section-title">Latest</h2>
 
 <% if (posts.length === 0) { %>
-  <p class="muted">You haven't posted anything yet.</p>
+  <p class="muted empty-state">Nothing here yet. Post something, or follow people to fill your feed.</p>
 <% } else { %>
   <ul class="post-list">
     <% posts.forEach(function (post) { %>
@@ -29,5 +29,7 @@
       </li>
     <% }) %>
   </ul>
+
+  <%- include('../partials/pagination') %>
 <% } %>
 <%- include('../partials/foot') %>

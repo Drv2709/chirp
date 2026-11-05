@@ -1,6 +1,7 @@
 import { Router, type Response } from "express";
 import { prisma } from "../lib/prisma";
-import { findPostsByAuthor, postSelect } from "../lib/postQueries";
+import { getFeedPage } from "../lib/feed";
+import { postSelect } from "../lib/postQueries";
 import { idParamSchema, postContentSchema } from "../validators/post";
 
 export const postsRouter = Router();
@@ -27,10 +28,10 @@ postsRouter.post("/posts", async (req, res, next) => {
     const parsed = postContentSchema.safeParse(body);
 
     if (!parsed.success) {
-      const posts = await findPostsByAuthor(user.id);
+      const feed = await getFeedPage(user.id, 1);
       res.status(400).render("pages/home", {
         title: "Home",
-        posts,
+        ...feed,
         error: parsed.error.issues[0]?.message ?? "Invalid post.",
         content: typeof body.content === "string" ? body.content : "",
       });
