@@ -1,0 +1,37 @@
+<%- include('../partials/head') %>
+<% const errs = locals.errors || {}; %>
+<% const vals = locals.values || {}; %>
+<h1>Create your account</h1>
+
+<form method="post" action="/signup" class="form" novalidate>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <% if (errs.form) { %>
+    <p class="form-error" role="alert"><%= errs.form %></p>
+  <% } %>
+
+  <label for="username">Username</label>
+  <input id="username" name="username" type="text" value="<%= vals.username || '' %>" maxlength="30" autocomplete="username" required autofocus>
+  <% if (errs.username) { %><p class="field-error"><%= errs.username %></p><% } %>
+
+  <label for="displayName">Display name</label>
+  <input id="displayName" name="displayName" type="text" value="<%= vals.displayName || '' %>" maxlength="50" autocomplete="name" required>
+  <% if (errs.displayName) { %><p class="field-error"><%= errs.displayName %></p><% } %>
+
+  <label for="email">Email</label>
+  <input id="email" name="email" type="email" value="<%= vals.email || '' %>" maxlength="255" autocomplete="email" required>
+  <% if (errs.email) { %><p class="field-error"><%= errs.email %></p><% } %>
+
+  <label for="password">Password</label>
+  <input id="password" name="password" type="password" maxlength="72" autocomplete="new-password" required>
+  <% if (errs.password) { %><p class="field-error"><%= errs.password %></p><% } %>
+
+  <label for="confirmPassword">Confirm password</label>
+  <input id="confirmPassword" name="confirmPassword" type="password" maxlength="72" autocomplete="new-password" required>
+  <% if (errs.confirmPassword) { %><p class="field-error"><%= errs.confirmPassword %></p><% } %>
+
+  <button type="submit" class="btn">Sign up</button>
+</form>
+
+<p class="muted">Already have an account? <a href="/login">Log in</a></p>
+<%- include('../partials/foot') %>

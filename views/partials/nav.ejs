@@ -1,0 +1,17 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="/">🐦 Chirp</a>
+    <nav class="nav">
+      <% if (locals.currentUser) { %>
+        <span class="nav__user">@<%= currentUser.username %></span>
+        <form method="post" action="/logout" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+          <button type="submit" class="btn btn--ghost">Log out</button>
+        </form>
+      <% } else { %>
+        <a href="/login">Log in</a>
+        <a href="/signup">Sign up</a>
+      <% } %>
+    </nav>
+  </div>
+</header>

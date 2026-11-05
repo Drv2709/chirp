@@ -1,13 +1,15 @@
 ## PHASE COMPLETE: P0 (Schema, Docker, config, skeleton, plan)
 
 **Files created**
-- prisma/schema.prisma, prisma/seed.js (placeholder), prisma/migrations/<timestamp>_init_schema/
+
+- prisma/schema.prisma, prisma/seed.js (placeholder), prisma/migrations/<timestamp>\_init_schema/
 - docker-compose.yml (Postgres 16 on host port 5433), .env.example, .gitignore
 - package.json, tsconfig.json
 - docs/PLAN.md, docs/PROGRESS.md, public/styles.css (empty)
 - Folder skeleton under src/, views/, public/
 
 **Commands run**
+
 - cp .env.example .env (SESSION_SECRET generated)
 - npm install
 - docker compose up -d
@@ -15,8 +17,31 @@
 - npx prisma validate
 
 **Verify checklist passed**
+
 - [x] chirp-db healthy on localhost:5433
 - [x] Migration folder exists; tables User, Post, Like, Comment, Follow, session created
 - [x] prisma validate OK
 - [x] bcrypt loads
 - [x] .env not tracked by git
+
+## PHASE COMPLETE: P1 (Express scaffold, env validation, health check, Prisma singleton)
+
+**Files created**
+
+- src/config/env.ts (Zod-validated env), src/lib/prisma.ts (singleton)
+- src/routes/health.ts, src/app.ts, src/server.ts
+- views/pages/hello.ejs (temporary), public/styles.css (base)
+
+**Commands run**
+
+- git add . && git commit -m "P0: schema, docker, plan, skeleton"
+- npm run typecheck
+- npm run dev
+- curl -i http://127.0.0.1:3000/healthz
+
+**Verify checklist passed**
+
+- [x] typecheck clean
+- [x] Server starts: "Chirp listening on http://localhost:3000 (development)"
+- [x] /healthz returns 200 {"status":"ok","db":"up"}
+- [x] / renders the EJS page with the styled heading

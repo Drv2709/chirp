@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+<h1>Log in</h1>
+
+<form method="post" action="/login" class="form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <% if (locals.error) { %>
+    <p class="form-error" role="alert"><%= error %></p>
+  <% } %>
+
+  <label for="username">Username</label>
+  <input id="username" name="username" type="text" value="<%= locals.username || '' %>" maxlength="30" autocomplete="username" required autofocus>
+
+  <label for="password">Password</label>
+  <input id="password" name="password" type="password" maxlength="72" autocomplete="current-password" required>
+
+  <button type="submit" class="btn">Log in</button>
+</form>
+
+<p class="muted">New here? <a href="/signup">Create an account</a></p>
+<%- include('../partials/foot') %>

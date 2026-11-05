@@ -1,10 +1,11 @@
-/* Chirp: mobile-first base styles. Expanded in later phases. */
+/* Chirp: mobile-first styles. Expanded in later phases. */
 :root {
   --bg: #ffffff;
   --text: #0f1419;
   --muted: #536471;
   --border: #eff3f4;
   --accent: #1d9bf0;
+  --accent-hover: #1a8cd8;
   --danger: #f4212e;
 }
 
@@ -22,6 +23,15 @@ body {
   line-height: 1.5;
 }
 
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 .container {
   max-width: 600px;
   margin: 0 auto;
@@ -29,5 +39,116 @@ body {
 }
 
 h1 {
+  font-size: 1.5rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* Header / nav */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.site-header__inner {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.2rem;
   color: var(--accent);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav__user {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.inline-form {
+  display: inline;
+  margin: 0;
+}
+
+/* Forms */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form label {
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.form input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+  border: 1px solid #cfd9de;
+  border-radius: 0.5rem;
+}
+
+.form input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.field-error,
+.form-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.form-error {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--danger);
+  border-radius: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.6rem 1.25rem;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  cursor: pointer;
+  margin-top: 0.75rem;
+}
+
+.btn:hover {
+  background: var(--accent-hover);
+}
+
+.btn--ghost {
+  margin-top: 0;
+  padding: 0.35rem 0.85rem;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid #cfd9de;
+}
+
+.btn--ghost:hover {
+  background: var(--border);
 }
