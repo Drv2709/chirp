@@ -1,0 +1,53 @@
+<%
+  const isDetail = locals.detail === true;
+  const isAuthor = locals.currentUser && locals.currentUser.id === post.author.id;
+  const returnTo = (locals.currentPath || '/') + '#post-' + post.id;
+%>
+<article class="post<%= isDetail ? ' post--detail' : '' %>" id="post-<%= post.id %>">
+  <div class="post__meta">
+    <strong><%= post.author.displayName %></strong>
+    <span class="muted">@<%= post.author.username %></span>
+    <% if (!isDetail) { %>
+      <span class="muted">·</span>
+      <a class="muted" href="/posts/<%= post.id %>">
+        <%= new Date(post.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %>
+      </a>
+    <% } %>
+  </div>
+
+  <p class="post__content<%= isDetail ? ' post__content--large' : '' %>"><%= post.content %></p>
+
+  <% if (isDetail) { %>
+    <p class="muted post__date">
+      <%= new Date(post.createdAt).toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' }) %>
+    </p>
+  <% } %>
+
+  <div class="post__actions">
+    <form method="post" action="/posts/<%= post.id %>/like" class="inline-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="returnTo" value="<%= returnTo %>">
+      <button
+        type="submit"
+        class="action-btn<%= post.likedByMe ? ' action-btn--liked' : '' %>"
+        aria-pressed="<%= post.likedByMe ? 'true' : 'false' %>"
+        aria-label="<%= post.likedByMe ? 'Unlike' : 'Like' %> this post"
+      >
+        <span aria-hidden="true"><%= post.likedByMe ? '♥' : '♡' %></span>
+        <span><%= post.likeCount %></span>
+      </button>
+    </form>
+
+    <a class="action-btn" href="/posts/<%= post.id %>#comments" aria-label="<%= post.commentCount %> comments">
+      <span aria-hidden="true">💬</span>
+      <span><%= post.commentCount %></span>
+    </a>
+
+    <% if (isAuthor) { %>
+      <form method="post" action="/posts/<%= post.id %>/delete" class="inline-form post__delete" onsubmit="return confirm('Delete this post?');">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="btn btn--danger">Delete</button>
+      </form>
+    <% } %>
+  </div>
+</article>

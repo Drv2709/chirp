@@ -91,3 +91,24 @@
 - [x] /posts/:id detail page; unknown id returns 404
 - [x] Delete is author-only and enforced server-side (403 for non-author)
 - [x] 280-char limit enforced server-side (400)
+
+## PHASE COMPLETE: P4 (Feed with pagination)
+
+**Files created**
+
+- src/validators/pagination.ts, src/lib/feed.ts
+- updated src/routes/home.ts, src/routes/posts.ts
+- views/partials/pagination.ejs, updated views/pages/home.ejs
+- updated public/styles.css
+
+**Commands run**
+
+- npm run typecheck, npm run dev
+- psql: 25 generated test posts, temporary Follow row flipped between ACCEPTED and PENDING, test data cleanup
+
+**Verify checklist passed**
+
+- [x] 10 posts per page, newest first; Newer/Older links enable and disable correctly
+- [x] ?page=abc and ?page=-5 show page 1; ?page=999 redirects to /
+- [x] ACCEPTED follow shows the followed user's posts; PENDING does not
+- [x] Follows are one-directional (sam's feed doesn't show dhruv's posts)

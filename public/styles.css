@@ -8,6 +8,7 @@
   --accent-hover: #1a8cd8;
   --danger: #f4212e;
   --danger-hover: #d91c28;
+  --like: #f91880;
 }
 
 *,
@@ -196,7 +197,7 @@ h1 {
 }
 
 .btn--danger {
-  margin-top: 0.25rem;
+  margin-top: 0;
   padding: 0.3rem 0.85rem;
   font-size: 0.9rem;
   background: var(--danger);
@@ -207,13 +208,15 @@ h1 {
 }
 
 /* Posts */
-.post-list {
+.post-list,
+.comment-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.post {
+.post,
+.comment {
   padding: 0.85rem 0;
   border-bottom: 1px solid var(--border);
 }
@@ -235,8 +238,59 @@ h1 {
   font-size: 1.25rem;
 }
 
+.post__date {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
 .post--detail {
   border-bottom: 0;
+}
+
+/* Post actions: like, comment count, delete */
+.post__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.post__delete {
+  margin-left: auto;
+}
+
+.action-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: var(--border);
+  text-decoration: none;
+}
+
+.action-btn--liked {
+  color: var(--like);
+}
+
+/* Comments */
+.comments {
+  margin-top: 0.5rem;
+}
+
+.comment .btn--danger {
+  margin-top: 0.25rem;
 }
 
 /* Pagination */

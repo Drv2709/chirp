@@ -1,5 +1,5 @@
 import { prisma } from "./prisma";
-import { postSelect } from "./postQueries";
+import { postSelectFor, toPostCard } from "./postQueries";
 
 export const FEED_PAGE_SIZE = 10;
 
@@ -23,13 +23,14 @@ export async function getFeedPage(userId: string, page: number) {
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     skip: (page - 1) * FEED_PAGE_SIZE,
     take: FEED_PAGE_SIZE + 1, // one extra row tells us whether a next page exists
-    select: postSelect,
+    select: postSelectFor(userId),
   });
 
   const hasNext = rows.length > FEED_PAGE_SIZE;
+  const pageRows = hasNext ? rows.slice(0, FEED_PAGE_SIZE) : rows;
 
   return {
-    posts: hasNext ? rows.slice(0, FEED_PAGE_SIZE) : rows,
+    posts: pageRows.map(toPostCard),
     page,
     hasNext,
     hasPrev: page > 1,

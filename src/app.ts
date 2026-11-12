@@ -7,6 +7,7 @@ import { sessionMiddleware } from "./config/session";
 import { csrfProtection } from "./middleware/csrf";
 import { requireAuth } from "./middleware/requireAuth";
 import { authRouter, logoutRouter } from "./routes/auth";
+import { commentsRouter } from "./routes/comments";
 import { healthRouter } from "./routes/health";
 import { homeRouter } from "./routes/home";
 import { postsRouter } from "./routes/posts";
@@ -36,6 +37,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
   res.locals.currentUser = req.user ?? null;
+  // Where like buttons send you back to. Only GET URLs are real pages; a re-rendered
+  // POST response falls back to "/" unless the route overrides it.
+  res.locals.currentPath = req.method === "GET" ? req.originalUrl : "/";
   next();
 });
 app.use(csrfProtection);
@@ -48,6 +52,7 @@ app.use(requireAuth);
 app.use(logoutRouter);
 app.use(homeRouter);
 app.use(postsRouter);
+app.use(commentsRouter);
 
 // Minimal 404 + error handlers (polished in P9).
 app.use((_req, res) => {
