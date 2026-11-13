@@ -1,0 +1,113 @@
+import { Router } from "express";
+import { Prisma } from "@prisma/client";
+import { prisma } from "../lib/prisma";
+import { listUsersWithFollowState } from "../lib/follows";
+import { renderNotFound } from "../lib/http";
+import { safeReturnTo } from "../lib/redirect";
+import { idParamSchema } from "../validators/post";
+
+export const usersRouter = Router();
+
+const USER_NOT_FOUND = "That user doesn't exist.";
+
+// ---------- Index: every user with the correct button state ----------
+
+usersRouter.get("/users", async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      res.redirect("/login");
+      return;
+    }
+
+    const users = await listUsersWithFollowState(user.id);
+    res.render("pages/users", { title: "Users", users });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ---------- Send follow request ----------
+
+usersRouter.post("/users/:id/follow", async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      res.redirect("/login");
+      return;
+    }
+
+    const id = idParamSchema.safeParse(req.params.id);
+    if (!id.success) {
+      renderNotFound(res, USER_NOT_FOUND);
+      return;
+    }
+
+    if (id.data === user.id) {
+      res.status(400).render("pages/error", {
+        title: "Bad request",
+        status: 400,
+        message: "You can't follow yourself.",
+      });
+      return;
+    }
+
+    const target = await prisma.user.findUnique({
+      where: { id: id.data },
+      select: { id: true },
+    });
+
+    if (!target) {
+      renderNotFound(res, USER_NOT_FOUND);
+      return;
+    }
+
+    try {
+      // followerId comes from the session; status is always PENDING (schema default).
+      await prisma.follow.create({
+        data: { followerId: user.id, followingId: target.id },
+        select: { id: true },
+      });
+    } catch (error) {
+      // Double-click or repeat request: @@unique([followerId, followingId]) caught it. Fine.
+      const isDuplicate =
+        error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
+      if (!isDuplicate) {
+        throw error;
+      }
+    }
+
+    const body = req.body as Record<string, unknown>;
+    res.redirect(safeReturnTo(body.returnTo, "/users"));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ---------- Unfollow / cancel my own pending request ----------
+
+usersRouter.post("/users/:id/unfollow", async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      res.redirect("/login");
+      return;
+    }
+
+    const id = idParamSchema.safeParse(req.params.id);
+    if (!id.success) {
+      renderNotFound(res, USER_NOT_FOUND);
+      return;
+    }
+
+    // Scoped to followerId = me, so this can only ever remove my own row.
+    await prisma.follow.deleteMany({
+      where: { followerId: user.id, followingId: id.data },
+    });
+
+    const body = req.body as Record<string, unknown>;
+    res.redirect(safeReturnTo(body.returnTo, "/users"));
+  } catch (error) {
+    next(error);
+  }
+});

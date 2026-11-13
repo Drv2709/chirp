@@ -4,6 +4,7 @@ import passport from "passport";
 import { isProduction } from "./config/env";
 import { configurePassport } from "./config/passport";
 import { sessionMiddleware } from "./config/session";
+import { countIncomingRequests } from "./lib/follows";
 import { csrfProtection } from "./middleware/csrf";
 import { requireAuth } from "./middleware/requireAuth";
 import { authRouter, logoutRouter } from "./routes/auth";
@@ -11,6 +12,8 @@ import { commentsRouter } from "./routes/comments";
 import { healthRouter } from "./routes/health";
 import { homeRouter } from "./routes/home";
 import { postsRouter } from "./routes/posts";
+import { requestsRouter } from "./routes/requests";
+import { usersRouter } from "./routes/users";
 
 export const app = express();
 
@@ -37,7 +40,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
   res.locals.currentUser = req.user ?? null;
-  // Where like buttons send you back to. Only GET URLs are real pages; a re-rendered
+  // Where like/follow buttons send you back to. Only GET URLs are real pages; a re-rendered
   // POST response falls back to "/" unless the route overrides it.
   res.locals.currentPath = req.method === "GET" ? req.originalUrl : "/";
   next();
@@ -49,10 +52,23 @@ app.use(authRouter);
 
 // Auth gate: everything below requires a logged-in user.
 app.use(requireAuth);
+
+// Pending follow-request count for the nav badge.
+app.use(async (req, res, next) => {
+  try {
+    res.locals.pendingRequestCount = req.user ? await countIncomingRequests(req.user.id) : 0;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.use(logoutRouter);
 app.use(homeRouter);
 app.use(postsRouter);
 app.use(commentsRouter);
+app.use(usersRouter);
+app.use(requestsRouter);
 
 // Minimal 404 + error handlers (polished in P9).
 app.use((_req, res) => {

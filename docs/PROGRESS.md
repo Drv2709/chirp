@@ -112,3 +112,27 @@
 - [x] ?page=abc and ?page=-5 show page 1; ?page=999 redirects to /
 - [x] ACCEPTED follow shows the followed user's posts; PENDING does not
 - [x] Follows are one-directional (sam's feed doesn't show dhruv's posts)
+
+## PHASE COMPLETE: P5 (Likes, comments, \_postCard partial)
+
+**Files created**
+
+- src/lib/http.ts, src/lib/redirect.ts, src/validators/comment.ts
+- updated src/lib/postQueries.ts, src/lib/feed.ts, src/routes/posts.ts, src/app.ts
+- src/routes/comments.ts
+- views/partials/\_postCard.ejs, updated views/pages/home.ejs and views/pages/post.ejs
+- updated public/styles.css
+
+**Commands run**
+
+- npm run typecheck, npm run dev
+- DevTools fetch tests (403 non-author comment delete, 400 over-length comment)
+- psql duplicate Like insert and count checks
+
+**Verify checklist passed**
+
+- [x] Like toggles, returns to the same page; counts update
+- [x] Comments create/delete; empty and 281-char comments rejected (400)
+- [x] Non-author comment delete returns 403 and the comment survives
+- [x] Duplicate Like insert fails on the unique constraint
+- [x] HTML in posts is rendered as text

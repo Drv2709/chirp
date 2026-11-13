@@ -1,0 +1,31 @@
+<%- include('../partials/head') %>
+<h1>Follow requests</h1>
+
+<% if (requests.length === 0) { %>
+  <p class="muted empty-state">No pending requests.</p>
+<% } else { %>
+  <ul class="user-list">
+    <% requests.forEach(function (request) { %>
+      <li class="user-row">
+        <div class="user-row__info">
+          <strong><%= request.follower.displayName %></strong>
+          <span class="muted">@<%= request.follower.username %></span>
+          <% if (request.follower.bio) { %>
+            <p class="user-row__bio"><%= request.follower.bio %></p>
+          <% } %>
+        </div>
+        <div class="user-row__action user-row__action--pair">
+          <form method="post" action="/requests/<%= request.id %>/accept" class="inline-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn">Accept</button>
+          </form>
+          <form method="post" action="/requests/<%= request.id %>/reject" class="inline-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn--outline">Reject</button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>
+<%- include('../partials/foot') %>

@@ -1,0 +1,25 @@
+<%
+  const state = person.followState;
+  const returnTo = locals.currentPath || '/users';
+  const isOn = state === 'requested' || state === 'following';
+  const labels = { none: 'Follow', follow_back: 'Follow Back', requested: 'Requested', following: 'Following' };
+  const ariaLabels = {
+    none: 'Follow @' + person.username,
+    follow_back: 'Follow @' + person.username + ' back',
+    requested: 'Cancel follow request to @' + person.username,
+    following: 'Unfollow @' + person.username
+  };
+%>
+<% if (state === 'self') { %>
+  <span class="btn btn--disabled" aria-disabled="true">You</span>
+<% } else if (state === 'incoming') { %>
+  <a class="btn btn--outline" href="/requests">Respond</a>
+<% } else { %>
+  <form method="post" action="/users/<%= person.id %>/<%= isOn ? 'unfollow' : 'follow' %>" class="inline-form">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="returnTo" value="<%= returnTo %>">
+    <button type="submit" class="btn<%= isOn ? ' btn--outline' : '' %>" aria-label="<%= ariaLabels[state] %>">
+      <%= labels[state] %>
+    </button>
+  </form>
+<% } %>
