@@ -157,3 +157,24 @@
 - [x] PENDING shows no posts in the feed; ACCEPTED does
 - [x] Non-recipient accept returns 403; self-follow 400; unknown user 404
 - [x] Duplicate follow blocked by the unique constraint
+
+
+## PHASE COMPLETE: P7 (Profiles, user index, Gravatar)
+
+**Files created**
+- src/lib/gravatar.ts, src/lib/profile.ts, src/validators/user.ts
+- updated src/lib/postQueries.ts, src/lib/follows.ts, src/routes/users.ts
+- views/partials/_avatar.ejs, views/pages/profile.ejs
+- updated views/partials/{nav,pagination,_postCard}.ejs, views/pages/{post,users,requests}.ejs
+- updated public/styles.css
+
+**Commands run**
+- npm run typecheck, npm run dev
+- psql: test bios, 25 temporary posts for pagination, cleanup
+
+**Verify checklist passed**
+- [x] Profile shows avatar, bio, counts, follow button, paginated posts
+- [x] Avatars and profile links on cards, comments, /users, /requests
+- [x] Unknown or invalid usernames return 404; usernames are case-insensitive
+- [x] No email address appears in rendered HTML
+- [x] Earlier flows (feed, likes, comments, follows) still work
