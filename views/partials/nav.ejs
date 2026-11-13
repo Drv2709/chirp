@@ -1,18 +1,28 @@
+<%
+  const here = (locals.currentPath || '/').split('#')[0].split('?')[0];
+  const meHref = locals.currentUser ? '/users/' + currentUser.username : '';
+  const onHome = here === '/';
+  const onUsers = here === '/users';
+  const onRequests = here === '/requests';
+  const onProfile = meHref !== '' && (here === meHref || here.indexOf(meHref + '/') === 0);
+  const current = ' aria-current="page"';
+%>
 <header class="site-header">
   <div class="site-header__inner">
     <a class="brand" href="/">🐦 Chirp</a>
-    <nav class="nav">
+    <nav class="nav" aria-label="Main">
       <% if (locals.currentUser) { %>
-        <a href="/users">Users</a>
-        <a href="/requests">Requests<% if (locals.pendingRequestCount > 0) { %> <span class="badge" aria-label="<%= pendingRequestCount %> pending"><%= pendingRequestCount %></span><% } %></a>
-        <a class="nav__user" href="/users/<%= currentUser.username %>">@<%= currentUser.username %></a>
-        <form method="post" action="/logout" class="inline-form">
+        <a class="nav__link nav__link--home" href="/"<%- onHome ? current : '' %>>Home</a>
+        <a class="nav__link" href="/users"<%- onUsers ? current : '' %>>Users</a>
+        <a class="nav__link" href="/requests"<%- onRequests ? current : '' %>>Requests<% if (locals.pendingRequestCount > 0) { %> <span class="badge" aria-label="<%= pendingRequestCount %> pending"><%= pendingRequestCount %></span><% } %></a>
+        <a class="nav__link nav__user" href="<%= meHref %>"<%- onProfile ? current : '' %>>@<%= currentUser.username %></a>
+        <form method="post" action="/logout" class="inline-form nav__logout">
           <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
           <button type="submit" class="btn btn--ghost">Log out</button>
         </form>
       <% } else { %>
-        <a href="/login">Log in</a>
-        <a href="/signup">Sign up</a>
+        <a class="nav__link" href="/login">Log in</a>
+        <a class="nav__link" href="/signup">Sign up</a>
       <% } %>
     </nav>
   </div>

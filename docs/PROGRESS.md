@@ -289,3 +289,24 @@
 - P10c bio edit: done
 - P10d avatar upload: intentionally not built. Avatars stay Gravatar with an identicon fallback.
 - Still not built (outside the project scope): image posts, guest sign-in, Tailwind, notifications, DMs, edit posts.
+
+
+## PHASE COMPLETE: Desktop layout polish
+
+**Files created**
+- src/lib/suggestions.ts ("Who to follow" query)
+- views/partials/rail.ejs (right-hand rail: search box and suggestions)
+- updated src/app.ts (suggestions loaded on page GETs), views/partials/head.ejs, foot.ejs, nav.ejs
+- updated public/styles.css (breakpoints at 768px, 1024px and 1280px)
+
+**Commands run**
+- npm run typecheck, npm run dev
+- Checked widths of about 375px, 900px, 1100px and 1440px
+
+**Verify checklist passed**
+- [x] Phones (under 768px): same layout as before, with the current nav link shown in bold
+- [x] Tablets (768px and up): plain white page, one wider column
+- [x] Desktops (1024px and up): sticky left sidebar (Home, Users, Requests with badge, profile, Log out), bold current link, hover highlight on posts
+- [x] Wide desktops (1280px and up): right rail with user search and a Who to follow card; follow buttons return to the same page
+- [x] Logged-out pages (login and signup) stay a simple centered form with no sidebars
+- [x] Feed, likes, comments, follows, search and bio editing still work

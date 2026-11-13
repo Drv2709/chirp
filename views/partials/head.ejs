@@ -8,6 +8,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+<body class="<%= locals.currentUser ? 'is-app' : 'is-guest' %>">
+<div class="shell">
 <%- include('nav') %>
 <main class="container">

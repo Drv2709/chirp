@@ -1,0 +1,40 @@
+<% if (locals.currentUser) { %>
+<% const people = locals.suggestions || []; %>
+<aside class="rail" aria-label="Search and suggestions">
+  <form method="get" action="/users" class="search search--rail" role="search">
+    <label for="rail-search" class="visually-hidden">Search users</label>
+    <input
+      id="rail-search"
+      class="search__input"
+      type="search"
+      name="q"
+      maxlength="50"
+      placeholder="Search users"
+      autocomplete="off"
+    >
+  </form>
+
+  <% if (people.length > 0) { %>
+    <section class="rail__card">
+      <h2 class="rail__title">Who to follow</h2>
+      <ul class="rail__list">
+        <% people.forEach(function (person) { %>
+          <li class="rail__row">
+            <div class="rail__person">
+              <a class="avatar-link" href="/users/<%= person.username %>" tabindex="-1" aria-hidden="true">
+                <%- include('_avatar', { url: person.avatarUrl, size: 40 }) %>
+              </a>
+              <div class="rail__names">
+                <a class="post__author" href="/users/<%= person.username %>"><strong><%= person.displayName %></strong></a>
+                <span class="muted">@<%= person.username %></span>
+              </div>
+            </div>
+            <%- include('_followButton', { person: person }) %>
+          </li>
+        <% }) %>
+      </ul>
+      <a class="rail__more" href="/users">Show more</a>
+    </section>
+  <% } %>
+</aside>
+<% } %>
