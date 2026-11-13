@@ -1,4 +1,5 @@
 import type { FollowStatus } from "@prisma/client";
+import { gravatarUrl } from "./gravatar";
 import { prisma } from "./prisma";
 
 export type FollowState =
@@ -32,6 +33,7 @@ export async function listUsersWithFollowState(viewerId: string) {
       username: true,
       displayName: true,
       bio: true,
+      email: true, // only used to compute the avatar URL
       // Follow rows where followingId = this user, filtered to the ones I sent (me -> them).
       followers: { where: { followerId: viewerId }, select: { status: true }, take: 1 },
       // Follow rows where followerId = this user, filtered to the ones aimed at me (them -> me).
@@ -44,6 +46,7 @@ export async function listUsersWithFollowState(viewerId: string) {
     username: u.username,
     displayName: u.displayName,
     bio: u.bio,
+    avatarUrl: gravatarUrl(u.email, 80),
     followState: computeFollowState({
       viewerId,
       targetId: u.id,
@@ -53,18 +56,30 @@ export async function listUsersWithFollowState(viewerId: string) {
   }));
 }
 
-export function listIncomingRequests(userId: string) {
-  return prisma.follow.findMany({
+export async function listIncomingRequests(userId: string) {
+  const requests = await prisma.follow.findMany({
     where: { followingId: userId, status: "PENDING" },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     select: {
       id: true,
       createdAt: true,
       follower: {
-        select: { id: true, username: true, displayName: true, bio: true },
+        select: { id: true, username: true, displayName: true, bio: true, email: true },
       },
     },
   });
+
+  return requests.map((request) => ({
+    id: request.id,
+    createdAt: request.createdAt,
+    follower: {
+      id: request.follower.id,
+      username: request.follower.username,
+      displayName: request.follower.displayName,
+      bio: request.follower.bio,
+      avatarUrl: gravatarUrl(request.follower.email, 80),
+    },
+  }));
 }
 
 export function countIncomingRequests(userId: string): Promise<number> {

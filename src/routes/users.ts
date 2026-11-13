@@ -3,8 +3,11 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 import { listUsersWithFollowState } from "../lib/follows";
 import { renderNotFound } from "../lib/http";
+import { getProfile, getProfilePosts } from "../lib/profile";
 import { safeReturnTo } from "../lib/redirect";
+import { pageQuerySchema } from "../validators/pagination";
 import { idParamSchema } from "../validators/post";
+import { usernameParamSchema } from "../validators/user";
 
 export const usersRouter = Router();
 
@@ -22,6 +25,50 @@ usersRouter.get("/users", async (req, res, next) => {
 
     const users = await listUsersWithFollowState(user.id);
     res.render("pages/users", { title: "Users", users });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ---------- Profile: avatar, bio, counts, follow button, their posts ----------
+
+usersRouter.get("/users/:username", async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      res.redirect("/login");
+      return;
+    }
+
+    const username = usernameParamSchema.safeParse(req.params.username);
+    if (!username.success) {
+      renderNotFound(res, USER_NOT_FOUND);
+      return;
+    }
+
+    const profile = await getProfile(username.data, user.id);
+    if (!profile) {
+      renderNotFound(res, USER_NOT_FOUND);
+      return;
+    }
+
+    const parsed = pageQuerySchema.safeParse(req.query);
+    const page = parsed.success ? parsed.data.page : 1;
+
+    const feed = await getProfilePosts(profile.id, user.id, page);
+
+    // Page number past the end: go back to the first page of this profile.
+    if (feed.posts.length === 0 && page > 1) {
+      res.redirect(`/users/${profile.username}`);
+      return;
+    }
+
+    res.render("pages/profile", {
+      title: `${profile.displayName} (@${profile.username})`,
+      profile,
+      ...feed,
+      basePath: `/users/${profile.username}`,
+    });
   } catch (error) {
     next(error);
   }

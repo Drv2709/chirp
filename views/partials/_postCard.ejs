@@ -4,15 +4,20 @@
   const returnTo = (locals.currentPath || '/') + '#post-' + post.id;
 %>
 <article class="post<%= isDetail ? ' post--detail' : '' %>" id="post-<%= post.id %>">
-  <div class="post__meta">
-    <strong><%= post.author.displayName %></strong>
-    <span class="muted">@<%= post.author.username %></span>
-    <% if (!isDetail) { %>
-      <span class="muted">·</span>
-      <a class="muted" href="/posts/<%= post.id %>">
-        <%= new Date(post.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %>
-      </a>
-    <% } %>
+  <div class="post__header">
+    <a class="avatar-link" href="/users/<%= post.author.username %>" tabindex="-1" aria-hidden="true">
+      <%- include('_avatar', { url: post.author.avatarUrl, size: 40 }) %>
+    </a>
+    <div class="post__meta">
+      <a class="post__author" href="/users/<%= post.author.username %>"><strong><%= post.author.displayName %></strong></a>
+      <span class="muted">@<%= post.author.username %></span>
+      <% if (!isDetail) { %>
+        <span class="muted">·</span>
+        <a class="muted" href="/posts/<%= post.id %>">
+          <%= new Date(post.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %>
+        </a>
+      <% } %>
+    </div>
   </div>
 
   <p class="post__content<%= isDetail ? ' post__content--large' : '' %>"><%= post.content %></p>

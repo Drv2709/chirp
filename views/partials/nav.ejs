@@ -5,7 +5,7 @@
       <% if (locals.currentUser) { %>
         <a href="/users">Users</a>
         <a href="/requests">Requests<% if (locals.pendingRequestCount > 0) { %> <span class="badge" aria-label="<%= pendingRequestCount %> pending"><%= pendingRequestCount %></span><% } %></a>
-        <span class="nav__user">@<%= currentUser.username %></span>
+        <a class="nav__user" href="/users/<%= currentUser.username %>">@<%= currentUser.username %></a>
         <form method="post" action="/logout" class="inline-form">
           <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
           <button type="submit" class="btn btn--ghost">Log out</button>

@@ -136,3 +136,24 @@
 - [x] Non-author comment delete returns 403 and the comment survives
 - [x] Duplicate Like insert fails on the unique constraint
 - [x] HTML in posts is rendered as text
+
+
+## PHASE COMPLETE: P6 (Follow system)
+
+**Files created**
+- src/lib/follows.ts, src/routes/users.ts, src/routes/requests.ts, updated src/app.ts
+- views/partials/_followButton.ejs, views/pages/users.ejs, views/pages/requests.ejs, updated views/partials/nav.ejs
+- updated public/styles.css
+
+**Commands run**
+- psql cleanup of temporary Follow rows
+- npm run typecheck, npm run dev
+- DevTools fetch tests (403 non-recipient accept, 400 self-follow, 404 unknown user)
+- psql duplicate Follow insert
+
+**Verify checklist passed**
+- [x] Follow -> Requested -> Accept -> Following / Follow Back; Reject deletes the row
+- [x] Cancel pending request and unfollow work; nav badge updates
+- [x] PENDING shows no posts in the feed; ACCEPTED does
+- [x] Non-recipient accept returns 403; self-follow 400; unknown user 404
+- [x] Duplicate follow blocked by the unique constraint

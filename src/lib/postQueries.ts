@@ -1,5 +1,25 @@
 import type { Prisma } from "@prisma/client";
+import { gravatarUrl } from "./gravatar";
 import { prisma } from "./prisma";
+
+// Email is selected only to compute the Gravatar URL; it is never passed on to templates.
+const authorSelect = {
+  id: true,
+  username: true,
+  displayName: true,
+  email: true,
+} satisfies Prisma.UserSelect;
+
+type AuthorRow = Prisma.UserGetPayload<{ select: typeof authorSelect }>;
+
+function toAuthor(author: AuthorRow) {
+  return {
+    id: author.id,
+    username: author.username,
+    displayName: author.displayName,
+    avatarUrl: gravatarUrl(author.email, 80),
+  };
+}
 
 // One explicit select shared by every place that renders a post card.
 // `likes` is filtered to the viewer, so likes.length is 0 or 1 ("did I like it?").
@@ -8,9 +28,7 @@ export function postSelectFor(viewerId: string) {
     id: true,
     content: true,
     createdAt: true,
-    author: {
-      select: { id: true, username: true, displayName: true },
-    },
+    author: { select: authorSelect },
     _count: { select: { likes: true, comments: true } },
     likes: { where: { userId: viewerId }, select: { id: true }, take: 1 },
   } satisfies Prisma.PostSelect;
@@ -24,7 +42,7 @@ export function toPostCard(post: PostRow) {
     id: post.id,
     content: post.content,
     createdAt: post.createdAt,
-    author: post.author,
+    author: toAuthor(post.author),
     likeCount: post._count.likes,
     commentCount: post._count.comments,
     likedByMe: post.likes.length > 0,
@@ -42,17 +60,22 @@ export async function findPostCard(postId: string, viewerId: string): Promise<Po
 }
 
 // Full thread, oldest first.
-export function findComments(postId: string) {
-  return prisma.comment.findMany({
+export async function findComments(postId: string) {
+  const comments = await prisma.comment.findMany({
     where: { postId },
     orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     select: {
       id: true,
       content: true,
       createdAt: true,
-      author: {
-        select: { id: true, username: true, displayName: true },
-      },
+      author: { select: authorSelect },
     },
   });
+
+  return comments.map((comment) => ({
+    id: comment.id,
+    content: comment.content,
+    createdAt: comment.createdAt,
+    author: toAuthor(comment.author),
+  }));
 }

@@ -28,13 +28,18 @@
     <ul class="comment-list">
       <% comments.forEach(function (comment) { %>
         <li class="comment" id="comment-<%= comment.id %>">
-          <div class="post__meta">
-            <strong><%= comment.author.displayName %></strong>
-            <span class="muted">@<%= comment.author.username %></span>
-            <span class="muted">·</span>
-            <span class="muted">
-              <%= new Date(comment.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %>
-            </span>
+          <div class="post__header">
+            <a class="avatar-link" href="/users/<%= comment.author.username %>" tabindex="-1" aria-hidden="true">
+              <%- include('../partials/_avatar', { url: comment.author.avatarUrl, size: 32 }) %>
+            </a>
+            <div class="post__meta">
+              <a class="post__author" href="/users/<%= comment.author.username %>"><strong><%= comment.author.displayName %></strong></a>
+              <span class="muted">@<%= comment.author.username %></span>
+              <span class="muted">·</span>
+              <span class="muted">
+                <%= new Date(comment.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %>
+              </span>
+            </div>
           </div>
           <p class="post__content"><%= comment.content %></p>
           <% if (currentUser && currentUser.id === comment.author.id) { %>

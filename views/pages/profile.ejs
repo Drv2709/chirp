@@ -1,0 +1,48 @@
+<%- include('../partials/head') %>
+<p><a href="/users">← All users</a></p>
+
+<section class="profile-header">
+  <%- include('../partials/_avatar', { url: profile.avatarUrl, size: 96 }) %>
+
+  <div class="profile-header__body">
+    <h1 class="profile-header__name"><%= profile.displayName %></h1>
+    <p class="muted profile-header__handle">@<%= profile.username %></p>
+
+    <% if (profile.bio) { %>
+      <p class="profile-header__bio"><%= profile.bio %></p>
+    <% } else { %>
+      <p class="muted profile-header__bio">No bio yet.</p>
+    <% } %>
+
+    <ul class="profile-stats">
+      <li><strong><%= profile.postCount %></strong> <span class="muted">Posts</span></li>
+      <li><strong><%= profile.followerCount %></strong> <span class="muted">Followers</span></li>
+      <li><strong><%= profile.followingCount %></strong> <span class="muted">Following</span></li>
+    </ul>
+
+    <p class="muted profile-header__joined">
+      Joined <%= new Date(profile.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) %>
+    </p>
+
+    <%- include('../partials/_followButton', {
+      person: { id: profile.id, username: profile.username, followState: profile.followState }
+    }) %>
+  </div>
+</section>
+
+<h2 class="section-title">Posts</h2>
+
+<% if (posts.length === 0) { %>
+  <p class="muted empty-state">
+    <%= profile.followState === 'self' ? "You haven't posted anything yet." : "@" + profile.username + " hasn't posted anything yet." %>
+  </p>
+<% } else { %>
+  <ul class="post-list">
+    <% posts.forEach(function (post) { %>
+      <li><%- include('../partials/_postCard', { post: post, detail: false }) %></li>
+    <% }) %>
+  </ul>
+
+  <%- include('../partials/pagination') %>
+<% } %>
+<%- include('../partials/foot') %>
