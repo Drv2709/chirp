@@ -2,7 +2,7 @@
 
 A minimal Twitter clone: text posts, follow requests with approval, likes and comments. Server-rendered with Express, TypeScript, Prisma and EJS. Built as a portfolio project for The Odin Project.
 
-**Live demo:** LIVE_URL_HERE
+**Live demo:** https://chirp-gm8i.onrender.com
 **Demo login:** username `demo`, password `password123`
 
 > The demo runs on free hosting tiers (a free web service and a free database that both sleep when idle), so the first request after a quiet period can take up to a minute to load.
