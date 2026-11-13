@@ -1,5 +1,9 @@
 import path from "node:path";
-import express, { type NextFunction, type Request, type Response } from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import passport from "passport";
 import { isProduction } from "./config/env";
 import { configurePassport } from "./config/passport";
@@ -13,6 +17,7 @@ import { healthRouter } from "./routes/health";
 import { homeRouter } from "./routes/home";
 import { postsRouter } from "./routes/posts";
 import { requestsRouter } from "./routes/requests";
+import { settingsRouter } from "./routes/settings";
 import { usersRouter } from "./routes/users";
 
 export const app = express();
@@ -67,7 +72,9 @@ app.use(requireAuth);
 // Pending follow-request count for the nav badge.
 app.use(async (req, res, next) => {
   try {
-    res.locals.pendingRequestCount = req.user ? await countIncomingRequests(req.user.id) : 0;
+    res.locals.pendingRequestCount = req.user
+      ? await countIncomingRequests(req.user.id)
+      : 0;
     next();
   } catch (error) {
     next(error);
@@ -80,6 +87,7 @@ app.use(postsRouter);
 app.use(commentsRouter);
 app.use(usersRouter);
 app.use(requestsRouter);
+app.use(settingsRouter);
 
 // ---------- 404 ----------
 
@@ -96,7 +104,8 @@ app.use((_req, res) => {
 function getHttpStatus(error: unknown): number {
   if (typeof error === "object" && error !== null) {
     const candidate =
-      (error as { status?: unknown }).status ?? (error as { statusCode?: unknown }).statusCode;
+      (error as { status?: unknown }).status ??
+      (error as { statusCode?: unknown }).statusCode;
     if (typeof candidate === "number" && candidate >= 400 && candidate <= 599) {
       return candidate;
     }
@@ -126,19 +135,22 @@ app.use((error: unknown, _req: Request, res: Response, next: NextFunction) => {
   const message =
     status >= 500
       ? "Something went wrong on our end. Please try again in a moment."
-      : (CLIENT_ERROR_MESSAGES[status] ?? "That request couldn't be completed.");
+      : (CLIENT_ERROR_MESSAGES[status] ??
+        "That request couldn't be completed.");
 
-  res.status(status).render(
-    "pages/error",
-    { title: status >= 500 ? "Server error" : "Error", status, message },
-    (renderError, html) => {
-      if (renderError) {
-        // The error page itself failed (for example a broken template): fall back to plain text.
-        console.error(renderError);
-        res.type("text/plain").send(`${status}: ${message}`);
-        return;
-      }
-      res.send(html);
-    },
-  );
+  res
+    .status(status)
+    .render(
+      "pages/error",
+      { title: status >= 500 ? "Server error" : "Error", status, message },
+      (renderError, html) => {
+        if (renderError) {
+          // The error page itself failed (for example a broken template): fall back to plain text.
+          console.error(renderError);
+          res.type("text/plain").send(`${status}: ${message}`);
+          return;
+        }
+        res.send(html);
+      },
+    );
 });

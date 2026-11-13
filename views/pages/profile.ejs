@@ -32,9 +32,13 @@
       Joined <%= new Date(profile.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) %>
     </p>
 
-    <%- include('../partials/_followButton', {
-      person: { id: profile.id, username: profile.username, followState: profile.followState }
-    }) %>
+    <% if (profile.followState === 'self') { %>
+      <a class="btn btn--outline" href="/settings/profile">Edit bio</a>
+    <% } else { %>
+      <%- include('../partials/_followButton', {
+        person: { id: profile.id, username: profile.username, followState: profile.followState }
+      }) %>
+    <% } %>
   </div>
 </section>
 

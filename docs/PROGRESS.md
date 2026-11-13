@@ -224,35 +224,68 @@
 - [x] Neon migrated and seeded; Render deploy live; demo / password123 works on the live URL
 - [x] Styled 404 and 500 pages; responsive on mobile and desktop
 
-
 ## PHASE COMPLETE: P10a (User search)
 
 **Files created**
+
 - src/validators/search.ts
 - updated src/lib/follows.ts (optional search filter), src/routes/users.ts, views/pages/users.ejs, public/styles.css
 
 **Commands run**
+
 - npm run typecheck, npm run dev
 
 **Verify checklist passed**
+
 - [x] Search by username or display name, case-insensitive, partial matches
-- [x] Empty results message; % and _ and HTML in the query are harmless
+- [x] Empty results message; % and \_ and HTML in the query are harmless
 - [x] Follow/Unfollow on a result returns to the same search
 - [x] Repeated or empty ?q= shows the full list
-
 
 ## PHASE COMPLETE: P10b (Followers / Following lists)
 
 **Files created**
+
 - src/lib/connections.ts
 - updated src/routes/users.ts, views/pages/profile.ejs
 - views/pages/connections.ejs
 
 **Commands run**
+
 - npm run typecheck, npm run dev
 
 **Verify checklist passed**
+
 - [x] Followers and Following counts on profiles are links to /users/:username/followers and /following
 - [x] Lists show ACCEPTED follows only, so rows match the counts; pending requests excluded
 - [x] Each row has the correct follow button and returns to the same list
 - [x] Empty states, pagination redirects and 404s work
+
+## PHASE COMPLETE: P10c (Edit bio)
+
+**Files created**
+
+- src/validators/profile.ts, src/routes/settings.ts
+- updated src/app.ts (settings router behind the auth gate), views/pages/profile.ejs (Edit bio button on own profile)
+- views/pages/settings-profile.ejs
+
+**Commands run**
+
+- npm run typecheck, npm run dev
+- curl logged-out check on /settings/profile
+- DevTools fetch tests: 161-character bio (400), missing CSRF token (403)
+
+**Verify checklist passed**
+
+- [x] /settings/profile redirects to /login when logged out
+- [x] Edit bio button on own profile; saved bio shows on the profile and /users; empty bio clears it
+- [x] Newlines and extra spaces collapse to one line; HTML is shown as literal text
+- [x] Over-length bio rejected server-side (400); missing CSRF token rejected (403)
+
+## P10 SUMMARY
+
+- P10a user search: done
+- P10b followers / following lists: done
+- P10c bio edit: done
+- P10d avatar upload: intentionally not built. Avatars stay Gravatar with an identicon fallback.
+- Still not built (outside the project scope): image posts, guest sign-in, Tailwind, notifications, DMs, edit posts.

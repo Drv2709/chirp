@@ -1,0 +1,19 @@
+<%- include('../partials/head') %>
+<p><a href="/users/<%= currentUser.username %>">← Back to profile</a></p>
+
+<h1>Edit bio</h1>
+
+<form method="post" action="/settings/profile" class="form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <% if (locals.error) { %>
+    <p class="form-error" role="alert"><%= error %></p>
+  <% } %>
+
+  <label for="bio">Bio</label>
+  <textarea id="bio" name="bio" rows="3" maxlength="160" placeholder="Tell people a little about yourself"><%= bio %></textarea>
+  <p class="muted">Max 160 characters. Leave it empty to remove your bio.</p>
+
+  <button type="submit" class="btn">Save</button>
+</form>
+<%- include('../partials/foot') %>
