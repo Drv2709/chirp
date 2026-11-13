@@ -9,17 +9,17 @@ A minimal Twitter clone: text posts, follow requests with approval, likes and co
 
 ## Screenshots
 
-| Feed | Profile |
-|---|---|
+| Feed                               | Profile                                  |
+| ---------------------------------- | ---------------------------------------- |
 | ![Feed](docs/screenshots/feed.png) | ![Profile](docs/screenshots/profile.png) |
 
-| Users and follow buttons | Follow requests |
-|---|---|
+| Users and follow buttons             | Follow requests                            |
+| ------------------------------------ | ------------------------------------------ |
 | ![Users](docs/screenshots/users.png) | ![Requests](docs/screenshots/requests.png) |
 
-| Post detail | Mobile |
-|---|---|
-| ![Post detail](docs/screenshots/post.png) | ![Mobile](docs/screenshots/mobile.png) |
+| Post detail                                | Mobile                                  |
+| ------------------------------------------ | --------------------------------------- |
+| ![Post detail](docs/screenshots/post.jpeg) | ![Mobile](docs/screenshots/mobile.jpeg) |
 
 ## Features
 
@@ -68,14 +68,14 @@ Open http://localhost:3000 and log in as `demo` / `password123`. Every seeded us
 
 ## Scripts
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start the dev server with reload |
-| `npm run typecheck` | Type-check without emitting files |
-| `npm run build` | Generate the Prisma client and compile to `dist/` |
-| `npm start` | Run the compiled server |
-| `npx prisma migrate dev` | Create and apply a migration locally |
-| `npx prisma db seed` | Reset and re-create the demo data |
+| Command                  | What it does                                      |
+| ------------------------ | ------------------------------------------------- |
+| `npm run dev`            | Start the dev server with reload                  |
+| `npm run typecheck`      | Type-check without emitting files                 |
+| `npm run build`          | Generate the Prisma client and compile to `dist/` |
+| `npm start`              | Run the compiled server                           |
+| `npx prisma migrate dev` | Create and apply a migration locally              |
+| `npx prisma db seed`     | Reset and re-create the demo data                 |
 
 ## Deployment (Render + Neon)
 
