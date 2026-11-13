@@ -1,6 +1,7 @@
-import { Router } from "express";
+import { Router, type RequestHandler } from "express";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../lib/prisma";
+import { getConnections, type ConnectionKind } from "../lib/connections";
 import { listUsersWithFollowState } from "../lib/follows";
 import { renderNotFound } from "../lib/http";
 import { getProfile, getProfilePosts } from "../lib/profile";
@@ -81,6 +82,56 @@ usersRouter.get("/users/:username", async (req, res, next) => {
     next(error);
   }
 });
+
+// ---------- Followers / Following lists (ACCEPTED follows only) ----------
+
+function connectionsHandler(kind: ConnectionKind): RequestHandler {
+  return async (req, res, next) => {
+    try {
+      const user = req.user;
+      if (!user) {
+        res.redirect("/login");
+        return;
+      }
+
+      const username = usernameParamSchema.safeParse(req.params.username);
+      if (!username.success) {
+        renderNotFound(res, USER_NOT_FOUND);
+        return;
+      }
+
+      const profile = await getProfile(username.data, user.id);
+      if (!profile) {
+        renderNotFound(res, USER_NOT_FOUND);
+        return;
+      }
+
+      const parsed = pageQuerySchema.safeParse(req.query);
+      const page = parsed.success ? parsed.data.page : 1;
+
+      const list = await getConnections(profile.id, user.id, kind, page);
+
+      // Page number past the end: go back to the first page of this list.
+      if (list.users.length === 0 && page > 1) {
+        res.redirect(`/users/${profile.username}/${kind}`);
+        return;
+      }
+
+      res.render("pages/connections", {
+        title: `${kind === "followers" ? "Followers" : "Following"} · @${profile.username}`,
+        profile,
+        kind,
+        ...list,
+        basePath: `/users/${profile.username}/${kind}`,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
+usersRouter.get("/users/:username/followers", connectionsHandler("followers"));
+usersRouter.get("/users/:username/following", connectionsHandler("following"));
 
 // ---------- Send follow request ----------
 

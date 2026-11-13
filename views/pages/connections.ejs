@@ -1,0 +1,50 @@
+<%- include('../partials/head') %>
+<% const isFollowers = kind === 'followers'; %>
+<p><a href="/users/<%= profile.username %>">← <%= profile.displayName %> (@<%= profile.username %>)</a></p>
+
+<h1><%= isFollowers ? 'Followers' : 'Following' %></h1>
+
+<p class="muted">
+  <% if (isFollowers) { %>
+    <strong>Followers (<%= profile.followerCount %>)</strong> ·
+    <a href="/users/<%= profile.username %>/following">Following (<%= profile.followingCount %>)</a>
+  <% } else { %>
+    <a href="/users/<%= profile.username %>/followers">Followers (<%= profile.followerCount %>)</a> ·
+    <strong>Following (<%= profile.followingCount %>)</strong>
+  <% } %>
+</p>
+
+<% if (users.length === 0) { %>
+  <p class="muted empty-state">
+    <% if (isFollowers) { %>
+      <%= profile.followState === 'self' ? 'Nobody follows you yet.' : '@' + profile.username + ' has no followers yet.' %>
+    <% } else { %>
+      <%= profile.followState === 'self' ? "You aren't following anyone yet." : '@' + profile.username + " isn't following anyone yet." %>
+    <% } %>
+  </p>
+<% } else { %>
+  <ul class="user-list">
+    <% users.forEach(function (person) { %>
+      <li class="user-row">
+        <div class="user-row__main">
+          <a class="avatar-link" href="/users/<%= person.username %>" tabindex="-1" aria-hidden="true">
+            <%- include('../partials/_avatar', { url: person.avatarUrl, size: 40 }) %>
+          </a>
+          <div class="user-row__info">
+            <a class="post__author" href="/users/<%= person.username %>"><strong><%= person.displayName %></strong></a>
+            <span class="muted">@<%= person.username %></span>
+            <% if (person.bio) { %>
+              <p class="user-row__bio"><%= person.bio %></p>
+            <% } %>
+          </div>
+        </div>
+        <div class="user-row__action">
+          <%- include('../partials/_followButton', { person: person }) %>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+
+  <%- include('../partials/pagination') %>
+<% } %>
+<%- include('../partials/foot') %>

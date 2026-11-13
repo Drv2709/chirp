@@ -16,8 +16,16 @@
 
     <ul class="profile-stats">
       <li><strong><%= profile.postCount %></strong> <span class="muted">Posts</span></li>
-      <li><strong><%= profile.followerCount %></strong> <span class="muted">Followers</span></li>
-      <li><strong><%= profile.followingCount %></strong> <span class="muted">Following</span></li>
+      <li>
+        <a href="/users/<%= profile.username %>/followers" aria-label="<%= profile.followerCount %> followers, view list">
+          <strong><%= profile.followerCount %></strong> Followers
+        </a>
+      </li>
+      <li>
+        <a href="/users/<%= profile.username %>/following" aria-label="<%= profile.followingCount %> following, view list">
+          <strong><%= profile.followingCount %></strong> Following
+        </a>
+      </li>
     </ul>
 
     <p class="muted profile-header__joined">

@@ -239,3 +239,20 @@
 - [x] Empty results message; % and _ and HTML in the query are harmless
 - [x] Follow/Unfollow on a result returns to the same search
 - [x] Repeated or empty ?q= shows the full list
+
+
+## PHASE COMPLETE: P10b (Followers / Following lists)
+
+**Files created**
+- src/lib/connections.ts
+- updated src/routes/users.ts, views/pages/profile.ejs
+- views/pages/connections.ejs
+
+**Commands run**
+- npm run typecheck, npm run dev
+
+**Verify checklist passed**
+- [x] Followers and Following counts on profiles are links to /users/:username/followers and /following
+- [x] Lists show ACCEPTED follows only, so rows match the counts; pending requests excluded
+- [x] Each row has the correct follow button and returns to the same list
+- [x] Empty states, pagination redirects and 404s work
