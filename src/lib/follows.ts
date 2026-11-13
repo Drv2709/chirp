@@ -1,4 +1,4 @@
-import type { FollowStatus } from "@prisma/client";
+import type { FollowStatus, Prisma } from "@prisma/client";
 import { gravatarUrl } from "./gravatar";
 import { prisma } from "./prisma";
 
@@ -24,8 +24,20 @@ export function computeFollowState(args: {
   return "none";
 }
 
-export async function listUsersWithFollowState(viewerId: string) {
+// All users (or the ones matching `search` in username or display name), alphabetical,
+// each with the correct follow-button state for the viewer.
+export async function listUsersWithFollowState(viewerId: string, search = "") {
+  const where: Prisma.UserWhereInput | undefined = search
+    ? {
+        OR: [
+          { username: { contains: search, mode: "insensitive" } },
+          { displayName: { contains: search, mode: "insensitive" } },
+        ],
+      }
+    : undefined;
+
   const users = await prisma.user.findMany({
+    where,
     orderBy: [{ username: "asc" }],
     take: 200,
     select: {

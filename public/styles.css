@@ -381,6 +381,38 @@ h1 {
   margin-top: 0.25rem;
 }
 
+/* Search */
+.search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.search__input {
+  flex: 1 1 12rem;
+  min-width: 0;
+  padding: 0.65rem 0.9rem;
+  font: inherit;
+  border: 1px solid #cfd9de;
+  border-radius: 999px;
+}
+
+.search .btn {
+  margin-top: 0;
+}
+
+.search__clear {
+  font-size: 0.95rem;
+}
+
+.search__summary {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
 /* User lists (/users, /requests) */
 .user-list {
   list-style: none;

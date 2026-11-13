@@ -7,13 +7,14 @@ import { getProfile, getProfilePosts } from "../lib/profile";
 import { safeReturnTo } from "../lib/redirect";
 import { pageQuerySchema } from "../validators/pagination";
 import { idParamSchema } from "../validators/post";
+import { userSearchSchema } from "../validators/search";
 import { usernameParamSchema } from "../validators/user";
 
 export const usersRouter = Router();
 
 const USER_NOT_FOUND = "That user doesn't exist.";
 
-// ---------- Index: every user with the correct button state ----------
+// ---------- Index: every user (or search results) with the correct button state ----------
 
 usersRouter.get("/users", async (req, res, next) => {
   try {
@@ -23,8 +24,15 @@ usersRouter.get("/users", async (req, res, next) => {
       return;
     }
 
-    const users = await listUsersWithFollowState(user.id);
-    res.render("pages/users", { title: "Users", users });
+    const parsed = userSearchSchema.safeParse(req.query);
+    const query = parsed.success ? parsed.data.q : "";
+
+    const users = await listUsersWithFollowState(user.id, query);
+    res.render("pages/users", {
+      title: query ? `Search: ${query}` : "Users",
+      users,
+      query,
+    });
   } catch (error) {
     next(error);
   }

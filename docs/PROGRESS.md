@@ -137,44 +137,105 @@
 - [x] Duplicate Like insert fails on the unique constraint
 - [x] HTML in posts is rendered as text
 
-
 ## PHASE COMPLETE: P6 (Follow system)
 
 **Files created**
+
 - src/lib/follows.ts, src/routes/users.ts, src/routes/requests.ts, updated src/app.ts
-- views/partials/_followButton.ejs, views/pages/users.ejs, views/pages/requests.ejs, updated views/partials/nav.ejs
+- views/partials/\_followButton.ejs, views/pages/users.ejs, views/pages/requests.ejs, updated views/partials/nav.ejs
 - updated public/styles.css
 
 **Commands run**
+
 - psql cleanup of temporary Follow rows
 - npm run typecheck, npm run dev
 - DevTools fetch tests (403 non-recipient accept, 400 self-follow, 404 unknown user)
 - psql duplicate Follow insert
 
 **Verify checklist passed**
+
 - [x] Follow -> Requested -> Accept -> Following / Follow Back; Reject deletes the row
 - [x] Cancel pending request and unfollow work; nav badge updates
 - [x] PENDING shows no posts in the feed; ACCEPTED does
 - [x] Non-recipient accept returns 403; self-follow 400; unknown user 404
 - [x] Duplicate follow blocked by the unique constraint
 
-
 ## PHASE COMPLETE: P7 (Profiles, user index, Gravatar)
 
 **Files created**
+
 - src/lib/gravatar.ts, src/lib/profile.ts, src/validators/user.ts
 - updated src/lib/postQueries.ts, src/lib/follows.ts, src/routes/users.ts
-- views/partials/_avatar.ejs, views/pages/profile.ejs
-- updated views/partials/{nav,pagination,_postCard}.ejs, views/pages/{post,users,requests}.ejs
+- views/partials/\_avatar.ejs, views/pages/profile.ejs
+- updated views/partials/{nav,pagination,\_postCard}.ejs, views/pages/{post,users,requests}.ejs
 - updated public/styles.css
 
 **Commands run**
+
 - npm run typecheck, npm run dev
 - psql: test bios, 25 temporary posts for pagination, cleanup
 
 **Verify checklist passed**
+
 - [x] Profile shows avatar, bio, counts, follow button, paginated posts
 - [x] Avatars and profile links on cards, comments, /users, /requests
 - [x] Unknown or invalid usernames return 404; usernames are case-insensitive
 - [x] No email address appears in rendered HTML
 - [x] Earlier flows (feed, likes, comments, follows) still work
+
+## PHASE COMPLETE: P8 (Seed script)
+
+**Files created**
+
+- prisma/seed.js (replaces the P0 placeholder; wired via package.json "prisma.seed")
+
+**Commands run**
+
+- npx prisma db seed (twice, to prove idempotence)
+- psql count and hash-prefix checks
+
+**Verify checklist passed**
+
+- [x] 20 users, 100 posts, 220 comments, 404 likes, mixed accepted/pending follows
+- [x] Second run removes the 20 seeded users and recreates identical counts
+- [x] demo / password123 works; /requests shows 3 requests; /users shows every button state
+- [x] Real accounts (dhruv, sam, dpt033) untouched
+
+## PHASE COMPLETE: P9 (Deploy, README, error pages, responsive CSS)
+
+**Files created**
+
+- render.yaml (Render web service; DATABASE_URL entered in Render, SESSION_SECRET generated)
+- README.md, docs/screenshots/\*, public/favicon.svg
+- updated src/app.ts (security headers, error handler), src/config/session.ts (Neon cold-start tolerant pool), src/routes/health.ts (/healthz liveness, /healthz/db readiness)
+- updated views/pages/error.ejs, views/partials/head.ejs, public/styles.css (mobile and desktop layouts)
+
+**Commands run**
+
+- npm run typecheck && npm run build
+- curl health, header and 413 checks; git ls-files checks
+- prisma migrate deploy and prisma db seed against the Neon database
+- Render Blueprint deploy from Drv2709/chirp
+
+**Verify checklist passed**
+
+- [x] Typecheck and build clean; /healthz and /healthz/db return 200; security headers present; oversized body returns 413
+- [x] .env untracked; lockfile, migrations and render.yaml tracked
+- [x] Neon migrated and seeded; Render deploy live; demo / password123 works on the live URL
+- [x] Styled 404 and 500 pages; responsive on mobile and desktop
+
+
+## PHASE COMPLETE: P10a (User search)
+
+**Files created**
+- src/validators/search.ts
+- updated src/lib/follows.ts (optional search filter), src/routes/users.ts, views/pages/users.ejs, public/styles.css
+
+**Commands run**
+- npm run typecheck, npm run dev
+
+**Verify checklist passed**
+- [x] Search by username or display name, case-insensitive, partial matches
+- [x] Empty results message; % and _ and HTML in the query are harmless
+- [x] Follow/Unfollow on a result returns to the same search
+- [x] Repeated or empty ?q= shows the full list
