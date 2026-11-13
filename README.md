@@ -19,7 +19,7 @@ A minimal Twitter clone: text posts, follow requests with approval, likes and co
 
 | Post detail                                | Mobile                                  |
 | ------------------------------------------ | --------------------------------------- |
-| ![Post detail](docs/screenshots/post.jpeg) | ![Mobile](docs/screenshots/mobile.jpeg) |
+| ![Post detail](docs/screenshots/postDetails.jpeg) | ![Mobile](docs/screenshots/mobile.jpeg) |
 
 ## Features
 
