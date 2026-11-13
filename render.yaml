@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: chirp
+    runtime: node
+    plan: free
+    # Pick the same region you chose for the Neon project (Neon: AWS US West 2 = Render: Oregon).
+    region: oregon
+    # --include=dev: the build needs typescript and prisma, which are devDependencies.
+    buildCommand: npm ci --include=dev && npm run build
+    # Migrations (including the session table) run on every start; they are a no-op when up to date.
+    startCommand: npx prisma migrate deploy && npm start
+    # Liveness only (no database query), so Render's checks don't keep Neon awake.
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: NODE_ENV
+        value: production
+      # Neon direct connection string; Render asks for this value when you create the Blueprint.
+      - key: DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true

@@ -1,5 +1,24 @@
 <%- include('../partials/head') %>
-<h1><%= status %></h1>
-<p><%= message %></p>
-<p><a href="/">Back to home</a></p>
+<%
+  const headings = {
+    400: 'Bad request',
+    403: 'Forbidden',
+    404: 'Page not found',
+    413: 'Request too large',
+    500: 'Something went wrong'
+  };
+  const heading = headings[status] || 'Something went wrong';
+%>
+<section class="error-page">
+  <p class="error-page__code"><%= status %></p>
+  <h1><%= heading %></h1>
+  <p class="muted"><%= message %></p>
+  <p>
+    <% if (locals.currentUser) { %>
+      <a class="btn" href="/">Back to home</a>
+    <% } else { %>
+      <a class="btn" href="/login">Log in</a>
+    <% } %>
+  </p>
+</section>
 <%- include('../partials/foot') %>

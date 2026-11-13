@@ -26,11 +26,22 @@ app.disable("x-powered-by");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "..", "views"));
 
+// Baseline security headers on every response.
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "same-origin");
+  if (isProduction) {
+    res.setHeader("Strict-Transport-Security", "max-age=15552000");
+  }
+  next();
+});
+
 configurePassport();
 
 app.use(express.urlencoded({ extended: false, limit: "10kb" }));
 
-// Public, session-free: static assets and the health check.
+// Public, session-free: static assets and the health checks.
 app.use(express.static(path.join(__dirname, "..", "public")));
 app.use(healthRouter);
 
@@ -70,7 +81,8 @@ app.use(commentsRouter);
 app.use(usersRouter);
 app.use(requestsRouter);
 
-// Minimal 404 + error handlers (polished in P9).
+// ---------- 404 ----------
+
 app.use((_req, res) => {
   res.status(404).render("pages/error", {
     title: "Not found",
@@ -79,15 +91,54 @@ app.use((_req, res) => {
   });
 });
 
+// ---------- Error handler ----------
+
+function getHttpStatus(error: unknown): number {
+  if (typeof error === "object" && error !== null) {
+    const candidate =
+      (error as { status?: unknown }).status ?? (error as { statusCode?: unknown }).statusCode;
+    if (typeof candidate === "number" && candidate >= 400 && candidate <= 599) {
+      return candidate;
+    }
+  }
+  return 500;
+}
+
+const CLIENT_ERROR_MESSAGES: Record<number, string> = {
+  400: "That request couldn't be understood.",
+  403: "You don't have permission to do that.",
+  404: "That page doesn't exist.",
+  413: "That request was too large.",
+};
+
 app.use((error: unknown, _req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     next(error);
     return;
   }
-  console.error(error);
-  res.status(500).render("pages/error", {
-    title: "Server error",
-    status: 500,
-    message: "Something went wrong on our end.",
-  });
+
+  const status = getHttpStatus(error);
+  if (status >= 500) {
+    console.error(error);
+  }
+
+  // Never expose internal error text to users.
+  const message =
+    status >= 500
+      ? "Something went wrong on our end. Please try again in a moment."
+      : (CLIENT_ERROR_MESSAGES[status] ?? "That request couldn't be completed.");
+
+  res.status(status).render(
+    "pages/error",
+    { title: status >= 500 ? "Server error" : "Error", status, message },
+    (renderError, html) => {
+      if (renderError) {
+        // The error page itself failed (for example a broken template): fall back to plain text.
+        console.error(renderError);
+        res.type("text/plain").send(`${status}: ${message}`);
+        return;
+      }
+      res.send(html);
+    },
+  );
 });
